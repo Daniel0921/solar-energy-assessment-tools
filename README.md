@@ -1,6 +1,6 @@
 # Solar Energy Assessment Calculator Apps
 
-These are three Streamlit apps designed for energy assessment conversations.
+These are four Streamlit apps designed for energy assessment conversations.
 
 ## Apps
 
@@ -16,23 +16,14 @@ These are three Streamlit apps designed for energy assessment conversations.
    - Estimates solar offset, payback period, and long-term savings.
    - Useful for positioning solar as an analysis, not a sales claim.
 
+4. `app_4_home_energy_profile_identifier.py`
+   - Builds a homeowner energy profile using electricity price, monthly kWh usage, projected annual rate increase, and number of years.
+   - Default annual rate increase is set to 5.5%.
+   - Useful for identifying low, moderate, high, or very high electricity usage homes and estimating long-term utility exposure.
+
 ## How to Run
 
 Install requirements:
 
 ```bash
 pip install streamlit pandas matplotlib
-```
-
-Run any app:
-
-```bash
-streamlit run app_1_bill_inflation_calculator.py
-streamlit run app_2_delivery_charge_exposure.py
-streamlit run app_3_solar_offset_payback.py
-```
-
-## Field Use
-
-These apps are meant to support an assessment conversation, not guarantee savings.
-Use them to explain scenarios, qualify interest, and help homeowners understand why a full energy assessment is worth reviewing.

@@ -16,7 +16,7 @@ These are four Streamlit apps designed for energy assessment conversations.
    - Estimates solar offset, payback period, and long-term savings.
    - Useful for positioning solar as an analysis, not a sales claim.
 
-4. `app_4_home_energy_profile_identifier.py`
+4. `app_4_home_energy_profile_calculator.py`
    - Builds a homeowner energy profile using electricity price, monthly kWh usage, projected annual rate increase, and number of years.
    - Default annual rate increase is set to 5.5%.
    - Useful for identifying low, moderate, high, or very high electricity usage homes and estimating long-term utility exposure.

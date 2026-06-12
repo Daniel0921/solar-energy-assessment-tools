@@ -1,0 +1,198 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# ============================================================
+# HOME ENERGY PROFILE IDENTIFIER
+# ============================================================
+# EDITABLE DEFAULT SETTINGS
+#
+# Change this value whenever you want the default utility
+# inflation assumption to change across the app.
+#
+# Example:
+# DEFAULT_ANNUAL_RATE_INCREASE = 5.5
+#
+# This means the app assumes electricity costs increase 5.5%
+# per year unless you manually change it in the app controls.
+# ============================================================
+
+DEFAULT_ANNUAL_RATE_INCREASE = 5.5
+
+st.set_page_config(
+    page_title="Home Energy Profile Identifier",
+    layout="centered"
+)
+
+st.title("Home Energy Profile Identifier")
+
+st.write(
+    "Estimate a homeowner's electricity profile, current annual cost, "
+    "and projected long-term utility exposure."
+)
+
+st.divider()
+
+st.subheader("1. Electricity Price Scale")
+
+electricity_price = st.slider(
+    "Electricity price ($ per kWh)",
+    min_value=0.05,
+    max_value=0.60,
+    value=0.31,
+    step=0.01,
+    help="Use the homeowner's electric rate. Massachusetts homes often fall around $0.31/kWh, but this varies."
+)
+
+st.subheader("2. Annual Utility Increase Rate")
+
+annual_rate_increase = st.slider(
+    "Annual electricity cost increase (%)",
+    min_value=0.0,
+    max_value=20.0,
+    value=float(DEFAULT_ANNUAL_RATE_INCREASE),
+    step=0.1,
+    help="Default is 5.5%. Edit DEFAULT_ANNUAL_RATE_INCREASE in the code if you want to change the default."
+)
+
+st.subheader("3. Number of Years")
+
+years = st.slider(
+    "Projection period in years",
+    min_value=1,
+    max_value=30,
+    value=10,
+    step=1
+)
+
+st.subheader("4. Monthly kWh Usage Scale")
+
+monthly_kwh = st.slider(
+    "Monthly electricity usage (kWh)",
+    min_value=100,
+    max_value=3000,
+    value=900,
+    step=25,
+    help="Use the monthly kWh usage listed on the homeowner's electric bill."
+)
+
+st.divider()
+
+# Calculations
+current_monthly_cost = monthly_kwh * electricity_price
+current_annual_cost = current_monthly_cost * 12
+rate = annual_rate_increase / 100
+
+rows = []
+cumulative_cost = 0
+
+for year in range(0, years + 1):
+    projected_price = electricity_price * ((1 + rate) ** year)
+    projected_monthly_cost = monthly_kwh * projected_price
+    projected_annual_cost = projected_monthly_cost * 12
+
+    if year > 0:
+        cumulative_cost += projected_annual_cost
+
+    rows.append({
+        "Year": year,
+        "Projected Price ($/kWh)": round(projected_price, 4),
+        "Monthly kWh Usage": monthly_kwh,
+        "Projected Monthly Cost": round(projected_monthly_cost, 2),
+        "Projected Annual Cost": round(projected_annual_cost, 2),
+        "Cumulative Cost": round(cumulative_cost, 2)
+    })
+
+df = pd.DataFrame(rows)
+
+future_monthly_cost = df.iloc[-1]["Projected Monthly Cost"]
+future_annual_cost = df.iloc[-1]["Projected Annual Cost"]
+total_projected_cost = df.iloc[-1]["Cumulative Cost"]
+
+st.subheader("Energy Profile Summary")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.metric("Current Monthly Cost", f"${current_monthly_cost:,.2f}")
+    st.metric("Current Annual Cost", f"${current_annual_cost:,.2f}")
+
+with col2:
+    st.metric(f"Monthly Cost in Year {years}", f"${future_monthly_cost:,.2f}")
+    st.metric(f"Annual Cost in Year {years}", f"${future_annual_cost:,.2f}")
+
+st.metric(
+    f"Estimated Total Utility Cost Over {years} Years",
+    f"${total_projected_cost:,.2f}"
+)
+
+st.divider()
+
+st.subheader("Homeowner Energy Profile Classification")
+
+if monthly_kwh < 500:
+    usage_profile = "Low Usage Home"
+    usage_note = "This home uses relatively little electricity. The financial opportunity may be smaller unless rates are very high."
+elif monthly_kwh < 1000:
+    usage_profile = "Moderate Usage Home"
+    usage_note = "This home has a balanced electricity profile. The assessment should review bill structure, roof condition, insulation, and future energy needs."
+elif monthly_kwh < 1600:
+    usage_profile = "High Usage Home"
+    usage_note = "This home has meaningful electricity demand. Higher usage often creates more opportunity to offset utility purchases."
+else:
+    usage_profile = "Very High Usage Home"
+    usage_note = "This home has very high electricity demand. The assessment should review HVAC, insulation, EVs, pools, heat pumps, and solar offset potential."
+
+st.info(f"**{usage_profile}** — {usage_note}")
+
+if electricity_price >= 0.30:
+    st.warning(
+        "This electricity price is in a high-cost range. Every kWh offset may carry stronger financial value."
+    )
+
+if future_monthly_cost >= 1000:
+    st.error(
+        f"At this rate, the projected monthly electricity cost crosses $1,000 by Year {years}."
+    )
+elif future_monthly_cost >= 750:
+    st.warning(
+        f"At this rate, the projected monthly electricity cost crosses $750 by Year {years}."
+    )
+elif future_monthly_cost >= 500:
+    st.warning(
+        f"At this rate, the projected monthly electricity cost crosses $500 by Year {years}."
+    )
+
+st.divider()
+
+st.subheader("Projection Chart")
+
+fig, ax = plt.subplots()
+ax.plot(df["Year"], df["Projected Monthly Cost"], marker="o", label="Projected Monthly Cost")
+ax.set_xlabel("Year")
+ax.set_ylabel("Monthly Cost ($)")
+ax.set_title("Projected Monthly Electricity Cost")
+ax.grid(True)
+ax.legend()
+st.pyplot(fig)
+
+st.subheader("Projection Table")
+st.dataframe(df, use_container_width=True)
+
+st.divider()
+
+st.subheader("Analyst Interpretation")
+
+st.write(f"""
+Based on the inputs, this homeowner currently uses **{monthly_kwh:,} kWh per month** at an estimated electricity price of **${electricity_price:.2f}/kWh**.
+
+That creates an estimated current electricity cost of **${current_monthly_cost:,.2f} per month**, or **${current_annual_cost:,.2f} per year**.
+
+Using a projected annual utility increase of **{annual_rate_increase:.1f}%**, this same usage profile could reach approximately **${future_monthly_cost:,.2f} per month** by Year **{years}**.
+
+Over the selected period, the homeowner may spend approximately **${total_projected_cost:,.2f}** on electricity if usage remains constant and rates increase at the selected pace.
+""")
+
+st.caption(
+    "This tool is for assessment and education only. Actual utility costs depend on rate class, supply charges, delivery charges, seasonal usage, incentives, and utility-specific pricing."
+)

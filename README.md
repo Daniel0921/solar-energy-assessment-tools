@@ -1,29 +1,33 @@
 # Solar Energy Assessment Calculator Apps
 
-These are four Streamlit apps designed for energy assessment conversations.
+These are five Streamlit apps designed for energy assessment conversations.
 
 ## Apps
 
-1. `app_1_bill_inflation_calculator.py`
-   - Projects electric bill growth using compound interest.
-   - Useful for showing what happens if utility costs increase over time.
+### `app_1_bill_inflation_calculator.py`
 
-2. `app_2_delivery_charge_exposure.py`
-   - Breaks down supply vs delivery charges.
-   - Useful for showing how much of a bill is delivery-related and how delivery costs may inflate.
+Projects electric bill growth using compound interest.  
+Useful for showing what happens if utility costs increase over time.
 
-3. `app_3_solar_offset_payback.py`
-   - Estimates solar offset, payback period, and long-term savings.
-   - Useful for positioning solar as an analysis, not a sales claim.
+### `app_2_delivery_charge_exposure.py`
 
-4. `app_4_home_energy_profile_calculator.py`
-   - Builds a homeowner energy profile using electricity price, monthly kWh usage, projected annual rate increase, and number of years.
-   - Default annual rate increase is set to 5.5%.
-   - Useful for identifying low, moderate, high, or very high electricity usage homes and estimating long-term utility exposure.
+Breaks down supply vs delivery charges.  
+Useful for showing how much of a bill is delivery-related and how delivery costs may inflate.
 
-## How to Run
+### `app_3_solar_offset_payback.py`
 
-Install requirements:
+Estimates solar offset, payback period, and long-term savings.  
+Useful for positioning solar as an analysis, not a sales claim.
 
-```bash
-pip install streamlit pandas matplotlib
+### `app_4_home_energy_profile_calculator.py`
+
+Builds a homeowner energy profile using the monthly electric bill, monthly kWh usage, a locked 5.5% annual increase rate, and a selected projection period.  
+Useful for estimating long-term utility exposure and identifying low, moderate, high, or very high electricity usage homes.
+
+### `app_5_electric_bill_forensics_calculator.py`
+
+Breaks down an electric bill using the formula:
+
+`Total Cost = (Monthly kWh Used × Price per kWh) + Fixed Monthly Fees`
+
+Useful for showing homeowners how monthly kWh usage, price per kWh, and fixed delivery/program charges combine to create the total bill. It also shows how high-usage months can increase costs while fixed delivery charges remain attached.

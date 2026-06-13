@@ -91,18 +91,21 @@ ax.set_ylabel("Cost ($)")
 ax.set_title("Current Bill Composition")
 st.pyplot(fig)
 
-scenario_df = pd.DataFrame(scenario_rows)
-st.dataframe(scenario_df, use_container_width=True)
+st.subheader("Bill Breakdown Summary")
 
-st.subheader("How Usage Increases Total Bill")
+st.write(
+    f"""
+For this home:
 
-fig2, ax2 = plt.subplots()
-ax2.plot(scenario_df["Monthly kWh"], scenario_df["Estimated Total Bill"], marker="o")
-ax2.set_xlabel("Monthly kWh Usage")
-ax2.set_ylabel("Estimated Total Bill ($)")
-ax2.set_title("Monthly kWh Usage vs Estimated Bill")
-ax2.grid(True)
-st.pyplot(fig2)
+- Monthly Usage: **{monthly_kwh:,} kWh**
+- Electricity Cost: **${current_energy_cost:,.2f}**
+- Delivery & Fixed Charges: **${fixed_fees:,.2f}**
+- Total Estimated Bill: **${current_total_cost:,.2f}**
+- Effective Electricity Cost: **${effective_current_rate:.3f}/kWh**
+"""
+)
+
+st.divider()
 
 st.subheader("Analyst Interpretation")
 

@@ -38,6 +38,8 @@ Run any app:
 streamlit run app_1_bill_inflation_calculator.py
 streamlit run app_2_delivery_charge_exposure.py
 streamlit run app_3_solar_offset_payback.py
+streamlit run app_4_home_energy_profile_calculator.py
+streamlit run app_5_electric_bill_forensics_calculator.py
 ```
 
 ## Field Use

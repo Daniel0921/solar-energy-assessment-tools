@@ -27,14 +27,7 @@ st.divider()
 current_energy_cost = monthly_kwh * price_per_kwh
 current_total_cost = current_energy_cost + fixed_fees
 
-high_energy_cost = high_usage_kwh * price_per_kwh
-high_total_cost = high_energy_cost + fixed_fees
-
-usage_difference = high_usage_kwh - monthly_kwh
-bill_difference = high_total_cost - current_total_cost
-
 effective_current_rate = current_total_cost / monthly_kwh if monthly_kwh else 0
-effective_high_rate = high_total_cost / high_usage_kwh if high_usage_kwh else 0
 
 st.subheader("Bill Formula")
 st.latex(r"\text{Total Cost} = (\text{Monthly kWh Used} \times \text{Price per kWh}) + \text{Fixed Monthly Fees}")
@@ -52,53 +45,26 @@ with col2:
 
 st.divider()
 
-st.subheader("High Usage Scenario")
-st.write(f"If usage rises from **{monthly_kwh:,} kWh** to **{high_usage_kwh:,} kWh**, while fixed fees remain at **${fixed_fees:,.2f}**, the bill changes like this:")
-
-col3, col4 = st.columns(2)
-with col3:
-    st.metric("High-Usage Energy Cost", f"${high_energy_cost:,.2f}")
-    st.metric("High-Usage Total Bill", f"${high_total_cost:,.2f}")
-with col4:
-    st.metric("Additional kWh Used", f"{usage_difference:,} kWh")
-    st.metric("Bill Increase", f"${bill_difference:,.2f}")
-
-st.divider()
-
 st.subheader("Bill Composition")
 
 current_fixed_share = fixed_fees / current_total_cost if current_total_cost else 0
 current_energy_share = current_energy_cost / current_total_cost if current_total_cost else 0
-high_fixed_share = fixed_fees / high_total_cost if high_total_cost else 0
-high_energy_share = high_energy_cost / high_total_cost if high_total_cost else 0
 
 st.write(f"""
 Current bill:
 - Energy usage cost: **{current_energy_share * 100:.1f}%**
 - Fixed / delivery fees: **{current_fixed_share * 100:.1f}%**
 
-High usage bill:
-- Energy usage cost: **{high_energy_share * 100:.1f}%**
-- Fixed / delivery fees: **{high_fixed_share * 100:.1f}%**
-""")
-
 composition_df = pd.DataFrame({
     "Category": ["Energy Usage Cost", "Fixed / Delivery Fees"],
-    "Current Bill": [current_energy_cost, fixed_fees],
-    "High Usage Bill": [high_energy_cost, fixed_fees]
+    "Cost": [current_energy_cost, fixed_fees]
 })
 
-fig1, ax1 = plt.subplots()
-ax1.bar(composition_df["Category"], composition_df["Current Bill"])
-ax1.set_ylabel("Cost ($)")
-ax1.set_title("Current Bill Composition")
-st.pyplot(fig1)
-
-fig2, ax2 = plt.subplots()
-ax2.bar(composition_df["Category"], composition_df["High Usage Bill"])
-ax2.set_ylabel("Cost ($)")
-ax2.set_title("High Usage Bill Composition")
-st.pyplot(fig2)
+fig, ax = plt.subplots()
+ax.bar(composition_df["Category"], composition_df["Cost"])
+ax.set_ylabel("Cost ($)")
+ax.set_title("Current Bill Composition")
+st.pyplot(fig)
 
 st.subheader("Usage Sensitivity Table")
 scenario_rows = []
@@ -126,6 +92,7 @@ ax3.grid(True)
 st.pyplot(fig3)
 
 st.subheader("Analyst Interpretation")
+
 st.write(f"""
 This bill is driven by two forces:
 
@@ -134,11 +101,12 @@ This bill is driven by two forces:
 
 At **{monthly_kwh:,} kWh**, the estimated bill is **${current_total_cost:,.2f}**.
 
-If usage rises to **{high_usage_kwh:,} kWh**, the estimated bill becomes **${high_total_cost:,.2f}**.
+Of that amount:
 
-That is an increase of **${bill_difference:,.2f}**.
+- **${current_energy_cost:,.2f}** comes from electricity consumption.
+- **${fixed_fees:,.2f}** comes from delivery and infrastructure-related costs.
 
-This is why controlling energy matters. Higher kWh usage increases the energy portion of the bill while the homeowner still remains exposed to delivery and infrastructure costs.
+This demonstrates why understanding both energy usage and delivery charges is important when evaluating long-term electricity costs.
 """)
 
 st.warning("Assessment takeaway: The more electricity a home needs from the utility, the more exposed the homeowner remains to usage charges, delivery charges, and future utility rate increases.")

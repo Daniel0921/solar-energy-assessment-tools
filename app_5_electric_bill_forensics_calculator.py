@@ -22,13 +22,6 @@ fixed_fees = st.slider(
     help="Use delivery services, customer charges, program charges, or other non-supply charges."
 )
 
-st.subheader("4. High Usage Scenario")
-high_usage_kwh = st.slider(
-    "High-usage monthly scenario (kWh)",
-    monthly_kwh, 4000, max(monthly_kwh, 1200), 25,
-    help="Show what happens when usage spikes from AC, heat pumps, EV charging, pools, or poor insulation."
-)
-
 st.divider()
 
 current_energy_cost = monthly_kwh * price_per_kwh

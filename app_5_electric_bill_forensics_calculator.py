@@ -91,25 +91,6 @@ ax.set_ylabel("Cost ($)")
 ax.set_title("Current Bill Composition")
 st.pyplot(fig)
 
-st.subheader("Usage Sensitivity Table")
-
-scenario_rows = []
-
-for kwh in range(250, 3250, 250):
-    energy_cost = kwh * price_per_kwh
-    total_cost = energy_cost + fixed_fees
-    effective_rate = total_cost / kwh if kwh else 0
-
-    scenario_rows.append(
-        {
-            "Monthly kWh": kwh,
-            "Energy Cost": round(energy_cost, 2),
-            "Fixed / Delivery Fees": round(fixed_fees, 2),
-            "Estimated Total Bill": round(total_cost, 2),
-            "Effective All-In Rate": round(effective_rate, 3),
-        }
-    )
-
 scenario_df = pd.DataFrame(scenario_rows)
 st.dataframe(scenario_df, use_container_width=True)
 
